@@ -20,11 +20,15 @@ public:
 
     // Method to add credits
     void addCredits(float amount) {
+        if (amount < 0) 
+          return;
         credits += amount;
     }
 
     // Method to deduct credits
     bool deductCredits(float amount) {
+        if (amount < 0) 
+          return false;
         if (credits >= amount) {
             credits -= amount;
             return true;

@@ -8,7 +8,7 @@
 #define DISPLAY_USER_TIME 5
 #define DISPLAY_SELECTED_ITEM_TIME 8
 #define DISPLAY_TRANSACTION_RESULT_TIME 3
-#define DISPLAY_ISSUE_TIME 10
+#define DISPLAY_ISSUE_TIME 1
 
 class DisplayHandler {
 private:
@@ -63,7 +63,7 @@ public:
     lcd.clear();
     lcd.print("Mini vending machine");
     lcd.setCursor(0,1);
-    lcd.print("Version 1.0");
+    lcd.print("Version 1.2");
   }
   void displayUser(User user)
   {

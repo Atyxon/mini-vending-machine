@@ -20,6 +20,7 @@
 #include "BuzzerHandler.h"
 #include "MotorHandler.h"
 
+#define MOTORS_ENABLE_PIN 8
 #define RST_PIN 9
 #define SS_PIN 10
 #define ITEM_NOT_SELECTED -1
@@ -34,13 +35,16 @@ ButtonHandler buttonHandler(pcf1);
 BuzzerHandler buzzer(pcf1);
 
 MotorHandler motorHandlers[] = {
-  MotorHandler(pcf2, 4, 5, 6, 7),
-  MotorHandler(pcf2, 0, 1, 2, 3),
-  MotorHandler(pcf1, 4, 5, 6, 7)
+  MotorHandler(pcf1, 4, 5, 6, 7, true),
+  MotorHandler(pcf2, 0, 1, 2, 3, true),
+  MotorHandler(pcf2, 4, 5, 6, 7, false)
 };
 User users[] = {
   User(0, "9e 17 84 9f", "Jan", 50.0),
-  User(1, "13 51 86 9f", "Dawid", 1)
+  User(1, "19 db 84 9f", "Marta", 500.1),
+  User(2, "02 1c 86 9f", "Arek", 0.7),
+  User(3, "f2 a2 83 9f", "Karina", 500.0),
+  User(4, "13 51 86 9f", "Dawid", 12.0)
 };
 Item items[] = {
   Item(0, "Kit Kat", 3.8),
@@ -55,10 +59,11 @@ const int displayUserTime = 4;
 const int displaySelectedItem = 8;
 
 void setup() {
-  Wire.begin();
-	Serial.begin(9600);		// Initialize serial communications with the PC
-	//while (!Serial);		// Do nothing if no serial port is opened (added for Arduinos based on ATMEGA32U4)
-
+	Serial.begin(9600);
+  pinMode(MOTORS_ENABLE_PIN, OUTPUT);
+  digitalWrite(MOTORS_ENABLE_PIN, LOW);
+  Wire.begin(); 
+	
 	Serial.println(F("Starting program..."));
   InitMotorInterface();
 	SPI.begin();			// Init SPI bus
@@ -66,40 +71,22 @@ void setup() {
 	delay(4);				// Optional delay. Some board do need more time after init to be ready, see Readme
 	mfrc522.PCD_DumpVersionToSerial();	// Show details of PCD - MFRC522 Card Reader details
   displayHandler.Init();
-  for (MotorHandler &motor : motorHandlers)
-  {
-    motor.Init();
-  }
 
+  digitalWrite(MOTORS_ENABLE_PIN, HIGH);
 	Serial.println(F("Program started!"));
 }
 
 void loop() {
-  int buttonState = buttonHandler.ButtonListen();
+  int buttonState = buttonHandler.ButtonListen(); // Wait for user input
   displayHandler.processTimer();
 
-  if(buttonState != lastButtonState)
-  {
+	Serial.println(buttonState);
+  if(buttonState != lastButtonState && buttonState != 0) { // Prevent button hold from registering as multiple presses
     lastButtonState = buttonState;
-
-    if(buttonState == 1)
-    {
-      selectedItem = 0;
-      displayHandler.displaySelectMenu(items[selectedItem].name, items[selectedItem].cost);
-      buzzer.ButtonBuzz();
-    }
-    else if(buttonState == 2)
-    {
-      selectedItem = 1;
-      displayHandler.displaySelectMenu(items[selectedItem].name, items[selectedItem].cost);
-      buzzer.ButtonBuzz();
-    }
-    else if(buttonState == 3)
-    {
-      selectedItem = 2;
-      displayHandler.displaySelectMenu(items[selectedItem].name, items[selectedItem].cost);
-      buzzer.ButtonBuzz();
-    }
+    selectedItem = buttonState-1;
+    
+    displayHandler.displaySelectMenu(items[selectedItem].name, items[selectedItem].cost);
+    buzzer.ButtonBuzz();
   }
 
 	// Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.

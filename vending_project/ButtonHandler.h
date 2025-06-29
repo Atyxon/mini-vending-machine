@@ -16,9 +16,9 @@ public:
   ButtonHandler(PCF8574 &pcfRef) : pcf(pcfRef) {}
   int ButtonListen()
   {
-    int button1 = pcf.read(0);
+    int button1 = pcf.read(2);
     int button2 = pcf.read(1);
-    int button3 = pcf.read(2);
+    int button3 = pcf.read(0);
 
     if(buttonState == BUTTON_NOT_PRESSED)
     {
