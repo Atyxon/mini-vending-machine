@@ -1,3 +1,5 @@
+[Engineering thesis PDF](Artur_Migacz_Engineering_Thesis.pdf)
+
 This engineering thesis presents the design and implementation of a mini vending machine controlled by an Arduino microcontroller. The project integrates mechanical, electronic, and software components, creating a functional prototype intended for educational and demonstrative purposes.
 
 The vending machine enables users to purchase products using RFID cards and an internal credit system, instead of real monetary transactions. The prototype consists of components such as stepper motors (28BYJ-48), an LCD 2004 display, an RFID RC522 reader, buttons, a buzzer, and I²C-based expanders (PCF8574). The housing was designed in Autodesk Fusion and manufactured using 3D printing technology.
